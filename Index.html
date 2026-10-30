@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monster Type - Student</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#1a0b2e;color:#fff;min-height:100vh;padding:12px}.header{background:#4a1fa8;border-radius:12px;padding:12px;text-align:center}.header h1{color:#ffb02e;font-size:22px}.card{max-width:650px;margin:15px auto;background:#fff8f0;color:#2d0f6b;border-radius:14px;padding:18px}.stats{display:flex;gap:8px;margin-bottom:10px}.s{flex:1;background:#2d0f6b;color:#fff;border-radius:8px;padding:8px;text-align:center;font-size:13px}.s b{font-size:18px;display:block}.text{border:2px solid #ddd;border-radius:10px;padding:12px;font-size:20px;line-height:1.6;min-height:90px;background:#fff}input{width:100%;padding:12px;margin-top:10px;border:2px solid #4a1fa8;border-radius:8px;font-size:18px}.btn{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-size:16px}.green{background:#4ade80}.orange{background:#ffb02e}</style></head><body>
+<div class="header"><h1>👾 MONSTER TYPE - TYPING CHALLENGE</h1><div>Open Day 2026 - Type Fast, Win Prize!</div></div>
+<div class="card">
+<div class="stats"><div class="s">TIME<br><b id="time">02:00</b></div><div class="s">WPM<br><b id="wpm">0</b></div><div class="s">ACC<br><b id="acc">100%</b></div><div class="s">SCORE<br><b id="score">0</b></div></div>
+<div id="txt" class="text">Loading...</div>
+<input id="inp" placeholder="Start typing here!"><input id="name" placeholder="Your Name (required)" style="margin-top:8px;border-color:#ffb02e">
+<button class="btn green" onclick="saveScore()">✅ FINISH & SAVE SCORE</button><button class="btn orange" onclick="location.reload()">🔄 Play Again</button>
+</div>
+<script>
+const texts=["The brave monster dashed across the forest to collect glowing crystals","Weligama students are the fastest typists in Southern Province","Practice every day and your fingers will dance on the keyboard","Typing fast is a superpower for your future","Welcome to Monster Type the ultimate challenge"];
+let cur="",pos=0,timeLeft=120,timer=null,score=0,errors=0,typed=0;
+const txtEl=document.getElementById('txt'),inpEl=document.getElementById('inp'),timeEl=document.getElementById('time'),wpmEl=document.getElementById('wpm'),accEl=document.getElementById('acc'),scoreEl=document.getElementById('score');
+function load(){cur=texts[Math.floor(Math.random()*texts.length)];pos=0;render();inpEl.value='';}
+function render(){let h='';for(let i=0;i<cur.length;i++){let cls=i<pos?(cur[i].toLowerCase()===inpEl.value[i]?.toLowerCase()?'color:green':'color:red;background:#ffe0e0'):i===pos?'border-bottom:3px solid orange;background:#fff3d0':'';h+=`<span style="${cls}">${cur[i]}</span>`;}txtEl.innerHTML=h;}
+function start(){if(timer)return;timer=setInterval(()=>{timeLeft--;let m=String(Math.floor(timeLeft/60)).padStart(2,'0'),s=String(timeLeft%60).padStart(2,'0');timeEl.textContent=m+':'+s;if(timeLeft<=0){clearInterval(timer);alert('Time up! Click FINISH & SAVE');}},1000);}
+inpEl.addEventListener('input',e=>{start();let v=e.target.value;typed=v.length;pos=v.length;render();if(v.length>0&&v[v.length-1].toLowerCase()!==cur[v.length-1]?.toLowerCase())errors++;let acc=typed?Math.round((1-errors/typed)*100):100;accEl.textContent=acc+'%';let wpm=Math.round((typed/5)/((120-timeLeft||1)/60))||0;wpmEl.textContent=wpm;if(v.toLowerCase()===cur.toLowerCase()){score+=cur.length;scoreEl.textContent=score;load();}});
+function saveScore(){let name=document.getElementById('name').value.trim();if(!name){alert('Enter name!');return;}let wpm=parseInt(wpmEl.textContent)||0,acc=parseInt(accEl.textContent)||100,sc=parseInt(scoreEl.textContent)||0;let entry={name,wpm,acc,score:sc,time:new Date().toLocaleString()};let list=JSON.parse(localStorage.getItem('monsterScores')||'[]');list.push(entry);list.sort((a,b)=>b.wpm-b.wpm||b.acc-a.acc);localStorage.setItem('monsterScores',JSON.stringify(list));alert('Saved! '+name+' - '+wpm+' WPM');}
+load();
+</script></body></html>
